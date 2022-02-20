@@ -5,7 +5,7 @@ import path from "path";
 function ProductDetailPage(props) {
   const { loadedProduct } = props;
 
-  //!if you use fallback : true use that!
+  //!if you use fallback : true then use that!
   if (!loadedProduct) {
     return <p>Loading...</p>;
   }
@@ -53,7 +53,7 @@ export async function getStaticPaths() {
 
   return {
     paths: pathsWithParams,
-    fallback: true,
+    fallback: false,
   };
 }
 
