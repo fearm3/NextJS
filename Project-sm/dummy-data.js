@@ -1,3 +1,5 @@
+import { getAllEvents } from "./helpers/api-util";
+
 const DUMMY_EVENTS = [
   {
     id: "e1",
@@ -39,10 +41,12 @@ export function getAllEvents() {
   return DUMMY_EVENTS;
 }
 
-export function getFilteredEvents(dateFilter) {
+export async function getFilteredEvents(dateFilter) {
   const { year, month } = dateFilter;
 
-  let filteredEvents = DUMMY_EVENTS.filter((event) => {
+  const allEvents = await getAllEvents();
+
+  let filteredEvents = allEvents.filter((event) => {
     const eventDate = new Date(event.date);
     return (
       eventDate.getFullYear() === year && eventDate.getMonth() === month - 1
