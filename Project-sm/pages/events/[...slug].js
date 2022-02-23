@@ -21,7 +21,7 @@ function FilteredEventsPage(props) {
   useEffect(() => {
     if (data) {
       for (const key in data) {
-        events.push({
+        events?.push({
           id: key,
           ...data[key],
         });
@@ -85,7 +85,7 @@ function FilteredEventsPage(props) {
     );
   }
 
-  const filteredEvents = loadedEvents.filter((event) => {
+  const filteredEvents = loadedEvents?.filter((event) => {
     const eventDate = new Date(event.date);
     return (
       eventDate.getFullYear() === numYear &&

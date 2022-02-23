@@ -19,6 +19,9 @@ function AllEventsPage(props) {
   return (
     <Fragment>
       <Head>
+        <title>All my Events</title>
+      </Head>
+      <Head>
         <title>All Events</title>
         <meta
           name="description"
@@ -31,7 +34,7 @@ function AllEventsPage(props) {
   );
 }
 
-export function getStaticProps() {
+export async function getStaticProps() {
   const events = await getAllEvents();
   return {
     props: {
