@@ -13,12 +13,12 @@ export function extractFeedback(filePath) {
 
 function handler(req, res) {
   if (req.method === "POST") {
-    const email = req.body;
+    const email = req.bod.email;
     const feedbackText = req.body.text;
 
     const newFeedback = {
       id: new Date().toISOString(),
-      email,
+      email: email,
       text: feedbackText,
     };
 
