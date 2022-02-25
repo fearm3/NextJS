@@ -1,12 +1,22 @@
 //!/api/comments/some-event-id
-import { MongoClient } from "mongodb";
+
+import {
+  connectDatabase,
+  insertDocument,
+  getAllDocuments,
+} from "../../../helpers/db-util";
 
 async function handler(req, res) {
   const eventId = req.query.eventId;
+  let client;
 
-  const client = await MongoClient.connect(
-    "mongodb+srv://fearm3:123456Pp@cluster0.q0r77.mongodb.net/events?retryWrites=true&w=majority"
-  );
+  //!Connect to db
+  try {
+    client = await connectDatabase();
+  } catch (error) {
+    res.status(500).json({ message: "Connecting to the database failed!" });
+    return;
+  }
 
   if (req.method === "POST") {
     //add server side validation
@@ -20,6 +30,7 @@ async function handler(req, res) {
       text.trim() === ""
     ) {
       res.status(422).json({ message: "Invalid input." });
+      client.close();
       return;
     }
     const newComment = {
@@ -29,31 +40,25 @@ async function handler(req, res) {
       eventId,
     };
 
-    const db = client.db();
+    let result;
+    //!Insert comment
+    try {
+      result = await insertDocument(client, "comments", newComment);
+      newComment._id = result.insertedId;
 
-    const result = await db.collection("comments").insertOne(newComment);
-
-    newComment.id = result.insertedId;
-
-    console.log(result);
-
-    res.status(201).json({ message: "Added comment.", comment: newComment });
+      res.status(201).json({ message: "Added comment.", comment: newComment });
+    } catch (error) {
+      res.status(500).json({ message: "Inserting comment failed!" });
+    }
   }
 
   if (req.method === "GET") {
-    const dummyList = [
-      {
-        id: "c1",
-        name: "Ford",
-        text: "A first comment! ",
-      },
-      {
-        id: "c2",
-        name: "Honda",
-        text: "A second comment! ",
-      },
-    ];
-    res.status(200).json({ comments: dummyList });
+    try {
+      const documents = await getAllDocuments(client, "comments", { _id: -1 });
+      res.status(200).json({ comments: documents });
+    } catch (error) {
+      res.status(500).json({ message: "Getting comments failed." });
+    }
   }
   client.close();
 }
